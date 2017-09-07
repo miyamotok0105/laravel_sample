@@ -15,8 +15,9 @@
     exit
     docker-compose up -d mysql
     docker-compose up -d nginx
-
-
+    
+    
     全部止める
     docker-compose stop
-
+    
+    
