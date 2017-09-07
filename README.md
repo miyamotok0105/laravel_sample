@@ -27,8 +27,7 @@ http://laradock.io/getting-started/#Usage
     //blogぽいのを構成する
     composer create-project laravel/laravel laravel --prefer-dist
     exit
-    docker-compose up -d mysql
-    docker-compose up -d nginx
+    docker-compose up -d mysql nginx
 
 
     全部止める
