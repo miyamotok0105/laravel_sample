@@ -1,7 +1,6 @@
 
 # Intellijのサンプル
 
-
 ## sqliteの操作
 
 
@@ -52,7 +51,7 @@ php artisan migrate:rollback
 php artisan migrate:reset
 ```
 
-### カラム変更のマイグレート
+### カラム変更のマイグレートする場合
 
 Laravelデフォルトの機能でカラム変更できないのでdbalを使用する。
 
@@ -70,6 +69,9 @@ php artisan make:seeder BookTableSeeder
 php artisan make:seeder AuthorsTableSeeder
 php artisan make:seeder PublishersTableSeeder
 
+//シードを指定して実行
+php artisan db:seed --class=ArticlesTableSeeder
+//シード実行(DatabaseSeederの内容を実行)
 php artisan db:seed
 ```
 
@@ -265,6 +267,55 @@ class MonsterController extends Controller
     }
 ```
 
+登録処理
+
+```php:app/Http/Controllers/MonsterController.php
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'name'   => 'required|max:255',
+            'voice'  => 'required|max:255',
+        ]);
+        $monster = new Monster();
+        $monster->name = $request->name;
+        $monster->voice = $request->voice;
+        $monster->save();
+        return response()->json();
+    }
+```
+
+```php:app/Http/Controllers/MonsterController.php
+    public function show($id)
+    {
+        $item = Monster::find($id);
+        return response()->json($item);
+    }
+```
+
+```php:app/Http/Controllers/MonsterController.php
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, [
+            'name'   => 'required|max:255',
+            'voice'  => 'required|max:255',
+        ]);
+        $monster = Monster::find($id);
+        $monster->name = $request->name;
+        $monster->voice = $request->voice;
+        $monster->save();
+        return response()->json();
+    }
+```
+
+```php:app/Http/Controllers/MonsterController.php
+    public function destroy(Request $request, $id)
+    {
+        $monster = Monster::find($id);
+        $monster->delete();
+        return response()->json();
+    }
+```
+
 ```php:routes/api.php
 ※下記を追加
  
@@ -277,7 +328,91 @@ php artisan route:list
 ```
 
 
+接続
+
+http://127.0.0.1:8000/api/monsters
+
+
+## 記事API追加
+
+
+```
+php artisan make:controller ArticleController --resource
+```
+
+
+
+```php:app/Http/Controllers/ArticleController.php
+//追加
+use App\Article;
+
+class ArticleController extends Controller
+{
+    //コンストラクタ追加
+    public function __construct()
+    {
+        $this->middleware('UnescapeJsonResponse');
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //追加
+        $items = Article::all();
+        return response()->json($items);
+    }
+```
+
+
+
+```php:routes/api.php
+※下記を追加
+ 
+Route::resource('articles', 'ArticleController');
+```
+
+接続
+
+http://127.0.0.1:8000/api/articles
+
+
+## フロント側を作る
+
+
+```
+npm install vue-router
+```
+
+
+```js:resources/assets/js/app.js
+
+```
+
+
+```
+npm run watch
+```
+
+
+# エラー解決
+
+### 500番エラーの時はlaravel.logを確認。
+
+storage/logsにサーバー側のエラーが出てる。
+
+```
+Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+```
+
+
+
 # 参考
 
-
 https://www.yuulinux.tokyo/9991/
+
+Laravel5.6とVue.jsで簡単なシングルページアプリケーション
+https://qiita.com/shin1kt/items/8c98fb209de5caa9076d

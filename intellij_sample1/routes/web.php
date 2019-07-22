@@ -11,20 +11,23 @@
 |
 */
 
-use App\Author;
+//use App\Author;
+//
+//Route::get('/', function () {
+//
+//    //テスト
+//    $flights = App\Author::all();
+//    foreach ($flights as $flight) {
+//        echo $flight->name;
+//    }
+//
+//    return view('welcome');
+//});
 
-Route::get('/', function () {
-
-    //テスト
-    $flights = App\Author::all();
-    foreach ($flights as $flight) {
-        echo $flight->name;
-    }
-
-    return view('welcome');
-});
 
 // /api/* 以外の全てのリクエストに対して、 resources/views/app.blade.php を返す
-//Route::get('/{any}', function () {
-//    return view('app');
-//})->where('any', '.*');
+// vue側でルーティングする場合は、Laravel側でのルーティングをやめる処理を書く。
+Route::get('/{any}', function () {
+    return view('app');
+})->where('any', '.*');
+

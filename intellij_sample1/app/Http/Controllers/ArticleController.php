@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 //追加
-use App\Models\Monster;
+use App\Article;
 
-class MonsterController extends Controller
+class ArticleController extends Controller
 {
     //コンストラクタ追加
     public function __construct()
@@ -22,7 +22,9 @@ class MonsterController extends Controller
     public function index()
     {
         //追加
-        $items = Monster::all();
+//        $items = Article::all();
+//        $items = Article::all()->take(5);
+        $items = Article::orderBy('id', 'desc')->get();
         return response()->json($items);
     }
 
@@ -44,17 +46,21 @@ class MonsterController extends Controller
      */
     public function store(Request $request)
     {
-        //追加
-
-        //insert処理
+        //登録処理
         $this->validate($request, [
-            'name'   => 'required|max:255',
-            'voice'  => 'required|max:255',
+            'id'   => 'required|max:10',
+            'user_id'  => 'required|max:10',
+            'content'  => 'required|max:100',
+            'title'  => 'required|max:100',
         ]);
-        $monster = new Monster();
-        $monster->name = $request->name;
-        $monster->voice = $request->voice;
-        $monster->save();
+
+        $article = new Article();
+        $article->id = $request->input('id','');
+        $article->user_id = $request->input('user_id','');
+        $article->content = $request->input('content','');
+        $article->title = $request->input('title','');
+        $article->save();
+
         return response()->json();
     }
 
@@ -67,7 +73,7 @@ class MonsterController extends Controller
     public function show($id)
     {
         //追加
-        $item = Monster::find($id);
+        $item = Article::find($id);
         return response()->json($item);
     }
 
@@ -91,18 +97,7 @@ class MonsterController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //追加
-
-        //update処理
-        $this->validate($request, [
-            'name'   => 'required|max:255',
-            'voice'  => 'required|max:255',
-        ]);
-        $monster = Monster::find($id);
-        $monster->name = $request->name;
-        $monster->voice = $request->voice;
-        $monster->save();
-        return response()->json();
+        //
     }
 
     /**
@@ -111,10 +106,8 @@ class MonsterController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
-        $monster = Monster::find($id);
-        $monster->delete();
-        return response()->json();
+        //
     }
 }

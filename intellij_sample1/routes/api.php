@@ -16,17 +16,20 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 
 //追加
+// URLが/api/monstersでコントローラ実行
 Route::resource('monsters', 'MonsterController');
+
+Route::resource('articles', 'ArticleController');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 //GET /api/articles で、記事5件をJsonで返す。
-Route::group(['middleware' => 'api'], function() {
-    Route::get('articles',  function() {
-        $articles = Article::all()->take(5);
-        return $articles;
-    });
-});
+//Route::group(['middleware' => 'api'], function() {
+//    Route::get('articles',  function() {
+//        $articles = Article::all()->take(5);
+//        return $articles;
+//    });
+//});
 

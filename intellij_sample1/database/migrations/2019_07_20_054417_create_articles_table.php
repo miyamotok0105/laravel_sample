@@ -20,8 +20,8 @@ class CreateArticlesTable extends Migration
             $table->text('content');
             $table->string('title');
             //
-//            $table->timestamps();
-            $table->timestamp('created_at')->nullable();
+            $table->timestamps();
+//            $table->timestamp('created_at')->nullable();
         });
     }
 
