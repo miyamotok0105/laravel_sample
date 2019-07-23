@@ -1,0 +1,18 @@
+version: '3'
+services:
+    # サービス名
+  web:
+      #インストールするイメージ名
+    image: nginx:1.15.6
+    ports:
+        # ポートフォワーディング。
+        #ホスト側（自分が使っているパソコン）のポート:コンテナ側のポート
+        #ホスト側の8000にアクセスしたらコンテナの80番ポートに転送してくれるので、「localhost:8000」でアクセス可能
+      - "8000:80"
+      # ホスト側（自分が使っているパソコン）にあるディレクトリやファイルをコンテナでも使えるようにする。
+      #こうすることで、ホスト側での変更がコンテナへも反映される。（dockerコンテナに入って直接編集する訳ではない）
+    volumes:
+#      - ./docker/web/default.conf:/etc/nginx/conf.d/default.conf
+#      - ./docker/web/default.d:/etc/nginx/conf.d
+      - ./docker/web/default.d/default.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www/html
