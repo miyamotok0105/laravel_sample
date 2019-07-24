@@ -380,6 +380,73 @@ Route::resource('articles', 'ArticleController');
 http://127.0.0.1:8000/api/articles
 
 
+## チャットAPI追加
+
+
+```
+php artisan make:model Message -m
+```
+
+
+```
+    public function up()
+    {
+        Schema::create('messages', function (Blueprint $table) {
+            $table->increments('id');
+            $table->text('body'); // メッセージ本文を追加
+            $table->timestamps();
+        });
+    }
+```
+
+
+```
+class Message extends Model
+{
+    protected $guarded = ['id'];
+}
+
+```
+
+
+```
+php artisan make:seed MessagesTableSeeder
+```
+
+
+```
+public function run()
+{
+    for($i = 1 ; $i <= 10 ; $i++) {
+
+        \App\Message::create([
+            'body' => $i .'番目のテキスト'
+        ]);
+
+    }
+}
+```
+
+
+```
+public function run()
+{
+     $this->call(UsersTableSeeder::class);
+     $this->call(MessagesTableSeeder::class);
+}
+```
+
+
+```
+php artisan db:seed
+```
+
+
+```
+php artisan make:controller ChatController --resource
+```
+
+
 ## フロント側を作る
 
 

@@ -25,6 +25,7 @@
 //});
 
 
+
 // /api/* 以外の全てのリクエストに対して、 resources/views/app.blade.php を返す
 // vue側でルーティングする場合は、Laravel側でのルーティングをやめる処理を書く。
 Route::get('/{any}', function () {

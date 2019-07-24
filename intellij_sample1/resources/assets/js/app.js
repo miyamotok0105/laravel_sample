@@ -23,6 +23,7 @@ Vue.component('hello-world-component', require('./components/HelloWorldComponent
 Vue.component('article-create-component', require('./components/Articles/Create.vue'));
 Vue.component('article-index-component', require('./components/Articles/Index.vue'));
 
+
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -32,6 +33,8 @@ const router = new VueRouter({
         { path: '/article/index', name: 'article_index', component: require('./components/Articles/Index.vue') },
         // 記事投稿フォームページ
         { path: '/article/create', name: 'article_create', component: require('./components/Articles/Create.vue') },
+        // チャット
+        { path: '/chatlist/index', name: 'chatlist_index', component: require('./components/ChatList/Index.vue') },
     ]
 });
 
