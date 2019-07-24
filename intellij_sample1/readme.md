@@ -447,6 +447,9 @@ php artisan make:controller ChatController --resource
 ```
 
 
+http://127.0.0.1:8000/chatlist/index
+
+
 ## フロント側を作る
 
 
