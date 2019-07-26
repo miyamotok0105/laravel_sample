@@ -1,6 +1,15 @@
 
 # Intellijのサンプル
 
+## バージョン
+
+```
+mac book
+php:5.6.30
+composer:1.8.6
+laravel:v5.4.36
+```
+
 ## sqliteの操作
 
 
@@ -26,6 +35,13 @@ sqlite3 database/database.sqlite
 #DB_USERNAME=homestead
 #DB_PASSWORD=secret
 DB_CONNECTION=sqlite
+```
+
+## key生成
+
+
+```
+php artisan key:generate
 ```
 
 ## マイグレート
