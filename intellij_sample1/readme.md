@@ -10,6 +10,14 @@ composer:1.8.6
 laravel:v5.4.36
 ```
 
+もう入ってるけどもし一からlaravelを入れるときは、
+
+
+```
+composer create-project laravel/laravel=5.5 intellij_sample1
+```
+
+
 ## sqliteの操作
 
 
