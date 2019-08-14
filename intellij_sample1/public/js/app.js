@@ -1523,7 +1523,7 @@ Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]);
 
 var router = new __WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]({
     mode: 'history',
-    routes: [
+    routes: [{ path: '/', redirect: 'article/index' },
     // TOPページ
     { path: '/article/index', name: 'article_index', component: __webpack_require__(13) },
     // 記事投稿フォームページ

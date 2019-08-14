@@ -29,6 +29,7 @@ Vue.use(VueRouter);
 const router = new VueRouter({
     mode: 'history',
     routes: [
+        { path: '/', redirect: 'article/index' },
         // TOPページ
         { path: '/article/index', name: 'article_index', component: require('./components/Articles/Index.vue') },
         // 記事投稿フォームページ

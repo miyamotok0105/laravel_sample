@@ -10,11 +10,31 @@ composer:1.8.6
 laravel:v5.4.36
 ```
 
-もう入ってるけどもし一からlaravelを入れるときは、
-
+初めはこれを叩いた。
 
 ```
 composer create-project laravel/laravel=5.5 intellij_sample1
+```
+
+git cloneした時はこちらを設定する。
+
+
+```
+#初期設定時
+composer install
+php artisan migrate
+php artisan db:seed
+
+#環境変数がない場合
+cp .env.example .env
+#keyがない場合
+php artisan key:generate
+#vue側を入れる
+npm install
+ビルド
+npm run dev
+#起動
+php artisan serve
 ```
 
 
@@ -121,6 +141,224 @@ php artisan serve
 ```
 php artisan route:list
 ```
+
+
+# サービスプロバイダ
+
+
+```
+1.
+GET:/api/greet
+入力：なし
+出力：文字列
+処理：挨拶を出力。
+
+2.
+GET:/api/greet/v2
+入力：なし
+出力：文字列
+処理：挨拶を出力。
+
+3.
+GET:/api/greet/{country}
+入力：country=国記号
+出力：文字列
+処理：国別の挨拶を出力。
+     en：英語
+     ja：日本語
+
+4.
+POST:/api/greet/
+入力：body param
+    query=挨拶
+    country=国番号
+出力：
+    status=ステータス
+    msg=メッセージ
+処理：挨拶を登録する。
+     en：英語
+     ja：日本語
+
+
+```
+
+
+## ルーティング部分で直接サービスを呼ぶ
+
+「ルティング->サービスプロバイダ->サービス」の流れ。
+
+
+なんかサービス作る。
+
+```
+mkdir app/Services
+touch app/Services/GreetService.php
+```
+
+
+```php:app/Services/GreetService.php
+<?php
+namespace App\Services;
+ 
+class GreetService
+{
+ 
+  public static function getMessage()
+  {
+  return 'hello!!';
+  }
+ 
+}
+```
+
+
+サービスプロバイダを作成する。
+
+サービスプロバイダでインスタンス生成方法を紐付けるバインドには種類がある。
+bindはnewしてインスタンス生成。instanceはインスタンス結合。singletonは１回きりの作成。
+
+
+```
+php artisan make:provider UtilServiceProvider
+```
+
+
+```:app/Providers/UtilServiceProvider.php
+    public function register()
+    {
+        $this->app->bind('greet', 'app\Service\GreetService');
+    }
+```
+
+
+今回作成したプロバイダを登録する。
+
+
+```:config/app.php
+    'providers' => [
+
+    ...
+    App\Providers\UtilServiceProvider::class,
+```
+
+
+ルティング設定。
+
+
+```:routes/api.php
+use App\Services\GreetService;
+Route::get('greet/', function(GreetService $greet){
+    return $greet->getMessage();
+});
+```
+
+
+http://localhost:8000/api/greet
+
+
+
+## コントローラでサービスを呼ぶ
+
+「ルティング->コントローラ->サービスプロバイダ->サービス」の流れ。
+
+
+コントローラ作る。
+
+
+```
+php artisan make:controller GreetController
+```
+
+
+```:app/Http/Controllers/GreetController.php
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Services\GreetService;
+
+class GreetController extends Controller
+{
+    private $greet;
+
+    function __construct(GreetService $greet) {
+        $this->greet = $greet;
+    }
+
+    public function getMessage() {
+        return $this->greet->getMessage();
+    }
+    
+}
+
+```
+
+
+ルーティングにコントローラ紐付け。
+
+
+```
+Route::get('greet/v2', 'GreetController@getMessage');
+```
+
+
+http://localhost:8000/api/greet/v2
+
+
+## 多言語で挨拶できるようにする
+
+
+コントローラに追加
+
+
+```
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Services\GreetService;
+use Validator;
+
+class GreetController extends Controller
+{
+    private $greet;
+
+    function __construct(GreetService $greet) {
+        $this->greet = $greet;
+    }
+
+    public function getMessage() {
+        return $this->greet->getMessage();
+    }
+
+    public function getMessageByCountry(Request $request, $country) {
+        $validator = Validator::make($request->all(), [
+            'country' => 'required|string|max:2'
+        ]);
+        return $this->greet->getMessageBy($request->country);
+    }
+
+    public function postMessage() {
+
+    }
+    
+}
+
+```
+
+http://localhost:8000/api/greet/v2/en
+http://localhost:8000/api/greet/v2/ja
+
+
+## 挨拶を登録する
+
+
+
+http://localhost:8000/api/greet/v2?country=en&query=111111
+
+
 
 
 # APIを作る

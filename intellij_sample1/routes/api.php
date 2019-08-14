@@ -23,6 +23,18 @@ Route::resource('articles', 'ArticleController');
 
 Route::resource('chatlist', 'ChatListController');
 
+//挨拶クラス
+use App\Services\GreetService;
+Route::get('greet/', function(GreetService $greet){
+    return $greet->getMessage();
+});
+//挨拶クラス
+Route::get('greet/v2', 'GreetController@getMessage');
+//挨拶クラス　国別
+Route::get('greet/v2/{country}', 'GreetController@getMessageByCountry');
+
+Route::post('greet/v2', 'GreetController@postMessage');
+
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
