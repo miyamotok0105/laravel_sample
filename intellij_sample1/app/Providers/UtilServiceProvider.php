@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+use App\Infrastructure\Repositories\IRepositories\IGreetDicRepositorys;
+use App\Infrastructure\Repositories\GreetDicRepositorys;
+
 class UtilServiceProvider extends ServiceProvider
 {
     /**
@@ -23,6 +26,13 @@ class UtilServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('greet', 'app\Service\GreetService');
+        // $this->app->bind('greetService', 'app\Service\GreetService');
+
+        // $this->app->singleton(IGreetDicRepositorys::class, GreetDicRepositorys::class);
+
+        $this->app->bind(
+            IGreetDicRepositorys::class,
+            GreetDicRepositorys::class
+        );
     }
 }

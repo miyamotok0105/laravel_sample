@@ -1,6 +1,12 @@
 
 # Intellijのサンプル
 
+## WIP
+
+MonsterControllerで動きが確認できてない部分がある。
+GreetControllerがエラーの状態。リポジトリやサービスに分離しようとしてエラー中。Monsterの実装を真似すると良い。    
+
+
 ## バージョン
 
 ```
@@ -38,7 +44,12 @@ php artisan serve
 ```
 
 
-## sqliteの操作
+## マイグレート
+
+### sqliteの場合のマイグレート
+
+sqliteは簡易なんだけど、テーブルの列変更とかできなかったはず。alter tableが出来ないはず。
+一回消してマイグレートし直しが必要のはず。
 
 
 ```
@@ -53,17 +64,66 @@ sqlite3 database/database.sqlite
 .q
 ```
 
+
 .envを変更
 
-```
+```:.env
 #DB_CONNECTION=mysql
 #DB_HOST=127.0.0.1
 #DB_PORT=3306
 #DB_DATABASE=homestead
 #DB_USERNAME=homestead
 #DB_PASSWORD=secret
+
 DB_CONNECTION=sqlite
 ```
+
+
+
+```
+#反映
+php artisan clear-compiled
+composer dump-autoload
+php artisan optimize
+
+php artisan migrate
+php artisan db:seed
+```
+
+
+### mysqlの場合のマイグレート
+
+mysql5.6か8.0かで少し違ってハマる。
+
+
+```
+#バージョン確認
+mysql --version
+#状態確認
+mysql.server status
+#開始
+mysql.server start
+#停止
+mysql.server stop
+#ログイン
+mysql -uroot
+create user 'default'@'localhost' identified  by 'secret';
+
+mysql -u default -p
+passは　secret
+```
+
+
+```:.env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=default
+DB_USERNAME=default
+DB_PASSWORD=secret
+```
+
+
 
 ## key生成
 
@@ -76,13 +136,59 @@ php artisan key:generate
 
 ### マイグレーションのファイル作成
 
+
 ```
 php artisan make:migration create_hoge
 php artisan make:migration create_authors_table
 php artisan make:migration create_publishers_table
 php artisan make:migration create_books_table
 php artisan make:migration create_bookdetails_table
+
+php artisan make:migration create_greet_dictionarys_table
 ```
+
+例）挨拶辞書テーブル作成。
+
+
+
+```php:2019_08_15_081958_create_greet_dictionarys_table.php
+
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateGreetDictionarysTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('greet_dictionary', function (Blueprint $table) {
+            $table->increments('greet_id');
+            $table->integer('country_id');
+            $table->string('greet_msg');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('greet_dictionary');
+    }
+}
+
+```
+
 
 ### 実行
 
@@ -179,6 +285,19 @@ POST:/api/greet/
      en：英語
      ja：日本語
 
+
+```
+
+
+モデル
+
+
+```
+greet_dictionary モデル
+
+greet_id：キー
+country_id：国ID
+greet_msg：挨拶文
 
 ```
 
@@ -386,11 +505,11 @@ DELETE /api/monsters/{id}
 
 
 ```
-mkdir ./app/Models
-php artisan make:model Models/Monster -m
+mkdir ./app/Domain/Models
+php artisan make:model app/Domain/Models/Monster -m
 ```
 
-```php:app/Models/Monster.php
+```php:app/Domain/Models/Monster.php
 <?php
 
 namespace App\Models;
@@ -506,7 +625,7 @@ class UnescapeJsonResponse
 ```php:app/Http/Controllers/MonsterController.php
 use Illuminate\Http\Request;
 //追加
-use App\Models\Monster;
+use App\Domain\Models\Monster;
 
 class MonsterController extends Controller
 {

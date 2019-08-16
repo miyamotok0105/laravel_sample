@@ -23,6 +23,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind('App\Services\MonsterService');
+
+        $this->app->bind(
+            \App\Infrastructure\Repositories\MonsterRepositoryInterface::class,
+            \App\Infrastructure\Repositories\MonsterRepository::class
+        );
     }
 }

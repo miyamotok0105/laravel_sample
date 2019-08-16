@@ -4,14 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 //追加
-use App\Models\Monster;
+use App\Services\MonsterService;
 
 class MonsterController extends Controller
 {
+    protected $monsterService;
     //コンストラクタ追加
-    public function __construct()
+    public function __construct(MonsterService $monsterService)
     {
         $this->middleware('UnescapeJsonResponse');
+        $this->monsterService = $monsterService;
     }
 
     /**
@@ -19,10 +21,10 @@ class MonsterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //追加
-        $items = Monster::all();
+        $items = $this->monsterService->getAll();
+
         return response()->json($items);
     }
 
@@ -44,18 +46,17 @@ class MonsterController extends Controller
      */
     public function store(Request $request)
     {
-        //追加
-
         //insert処理
         $this->validate($request, [
             'name'   => 'required|max:255',
             'voice'  => 'required|max:255',
         ]);
-        $monster = new Monster();
-        $monster->name = $request->name;
-        $monster->voice = $request->voice;
-        $monster->save();
-        return response()->json();
+        $name = $request->name;
+        $voice = $request->voice;
+        $status = $this->monsterService->add($name, $voice);
+
+        $ref = array('status' => $status);
+        return response()->json($ref);
     }
 
     /**
@@ -64,10 +65,14 @@ class MonsterController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        //追加
-        $item = Monster::find($id);
+        $this->validate($request, [
+            'id'   => 'required|max:10'
+        ]);
+        $id = $request->id;
+        $item = $this->monsterService->getById($id);
+
         return response()->json($item);
     }
 
@@ -77,7 +82,7 @@ class MonsterController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit()
     {
         //
     }
@@ -89,20 +94,22 @@ class MonsterController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //追加
-
         //update処理
         $this->validate($request, [
+            'id'   => 'required|max:10',
             'name'   => 'required|max:255',
             'voice'  => 'required|max:255',
         ]);
-        $monster = Monster::find($id);
-        $monster->name = $request->name;
-        $monster->voice = $request->voice;
-        $monster->save();
-        return response()->json();
+
+        $id = $request->id;
+        $name = $request->name;
+        $voice = $request->voice;
+        $status = $this->monsterService->changeById($id, $name, $voice);
+
+        $ref = array('status' => $status);
+        return response()->json($ref);
     }
 
     /**
@@ -113,8 +120,13 @@ class MonsterController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $monster = Monster::find($id);
-        $monster->delete();
-        return response()->json();
+        if (empty($id)) {
+            $ref = array('status' => "invalied value.");
+            return response()->json($ref);
+        }
+        $status = $this->monsterService->delete($id);
+
+        $ref = array('status' => $status);
+        return response()->json($ref);
     }
 }

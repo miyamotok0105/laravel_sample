@@ -8,23 +8,30 @@ use Validator;
 
 class GreetController extends Controller
 {
-    private $greet;
+    private $greetService;
     private $greetDic = array(); 
 
     //メソッドインジェクションでサービスをnewしてる。
-    function __construct(GreetService $greet) {
-        $this->greet = $greet;
+    function __construct(GreetService $greetService) {
+
+    // function __construct() {
+        $this->greetService = $greetService;
+        
+        // $this->greet = $app()->make('greetService');
+        // $this->greet = $this->greet()->make('greetService');
+
+        
     }
 
     public function getMessage() {
-        return $this->greet->getMessage();
+        return $this->greetService->getMessage();
     }
 
     public function getMessageByCountry(Request $request, $country) {
         $validator = Validator::make($request->all(), [
             'country' => 'required|string|max:2'
         ]);
-        return $this->greet->getMessageByCountry($request->country);
+        return $this->greetService->getMessageByCountry($request->country);
     }
 
     public function postMessage(Request $request) {
