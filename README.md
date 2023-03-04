@@ -10,6 +10,12 @@ composer create-project laravel/laravel:^8.0 example-app-v8.0
 mysql -uroot -p
 CREATE DATABASE exampleAppV8 DEFAULT CHARACTER SET utf8mb4;
 
+
+# Linux
+systemctl start mysql
+# Mac
+mysql.server start
+
 ```
 
 
